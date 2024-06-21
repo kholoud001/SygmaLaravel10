@@ -6,19 +6,27 @@
                     <img src="{{ asset('images/SygmaLogo2.png') }}" alt="Sygma Logo">
                     <form id="login-form" method="POST" action="{{ route('login') }}" class="bg-[#00A1A1] p-4 flex flex-col gap-2 rounded-lg">
                         @csrf
-                        <input class="z-50 outline-none w-full rounded-lg p-2" type="text" name="email" placeholder="Identifiant...">
-                        <input class="z-50 outline-none w-full rounded-lg p-2" type="password" name="password" placeholder="Mot de passe...">
-
+                        <!--Email -->
+                        <div class="flex items-center space-x-2 ">
+                            <i class="fas fa-envelope text-white"></i>
+                            <input class="z-50 outline-none w-full rounded-lg p-2" type="text" name="email" placeholder="Votre Email...">
+                        </div>
+                        <!--Password -->
+                        <div class="flex items-center space-x-2 ">
+                            <i class="fas fa-lock text-white"></i>
+                            <input class="z-50 outline-none w-full rounded-lg p-2" type="password" name="password" placeholder="Mot de passe...">
+                        </div>
                         <!-- Remember Me -->
-                        <label for="remember_me" class="inline-flex items-center">
-                            <input id="remember_me" type="checkbox" class="rounded dark:bg-gray-900 border-gray-300 dark:border-gray-700 text-indigo-600 shadow-sm focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:focus:ring-offset-gray-800" name="remember">
-                            <span class="ms-2 text-sm text-gray-600 dark:text-gray-400">{{ __('Remember me') }}</span>
+                        <label for="remember_me" class="inline-flex items-center justify-end space-x-2">
+                            <span class="ms-2 text-sm text-gray-600 dark:text-gray-400">{{ __('Se souvenir de moi ') }}</span>
+                            <input id="remember_me" type="checkbox" class=" rounded dark:bg-gray-900 border-gray-300 dark:border-gray-700 text-indigo-600 shadow-sm focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:focus:ring-offset-gray-800" name="remember">
+
                         </label>
                 
 
                         @if (Route::has('password.request'))
                      <a class="mt-2 bg-transparent underline text-white text-sm" href="{{ route('password.request') }}">
-                    {{ __('Forgot your password?') }}
+                    {{ __('Mot de passe oublié?') }}
                 </a>
             @endif
 
