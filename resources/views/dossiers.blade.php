@@ -1,6 +1,6 @@
 
 <x-app-layout>
-    <div class="p-4  flex gap-2 flex-col">
+    <div class="p-4 md:ml-52   flex gap-2 flex-col">
             <h1 class="font-bold text-3xl">Dossiers</h1>
             <div class="mt-4 bg-white p-4 py-8 rounded-lg">
                 <div class="flex flex-row gap-4">
@@ -12,7 +12,7 @@
                     <select name="#" id="#" class="w-48 border-2 rounded-full border-[#009999] outline-none p-2 mb-4">
                         <option value="Testing" disabled selected>Select car...</option>
                     </select>
-                    <a href="#" class="text-white bg-[#009999] hover:bg-[#008080] transition-all h-fit rounded-full p-3">
+                    <a href="{{ route('add.dossier') }}" class="text-white bg-[#009999] hover:bg-[#008080] transition-all h-fit rounded-full p-3">
                         <i class="fas fa-plus mr-2"></i>Créer nouveau rapport
                     </a>
                 </div>

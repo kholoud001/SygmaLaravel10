@@ -10,4 +10,10 @@ class DashboardController extends Controller
     public function dossiers()
     {
         return view('dossiers');
-    }}
+    }
+
+    public function store()
+    {
+        return view('add_dossier');
+    }
+}
