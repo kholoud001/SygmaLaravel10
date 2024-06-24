@@ -14,6 +14,7 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             PartiesTableSeeder::class,
+            MarquesTableSeeder::class,
         ]);
     }
 }
