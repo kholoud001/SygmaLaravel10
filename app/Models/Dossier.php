@@ -19,6 +19,11 @@ class Dossier extends Model
         'fiscal_power', 'cartegrise_recto', 'cartegrise_verso',
         'permis_recto', 'permis_verso'
     ];
+    
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 
     public function parties()
     {
