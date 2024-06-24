@@ -11,11 +11,17 @@
                             <i class="fas fa-envelope text-white"></i>
                             <input class="z-50 outline-none w-full rounded-lg p-2" type="text" name="email" placeholder="Votre Email...">
                         </div>
+                        @error('email')
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                            @enderror
                         <!--Password -->
                         <div class="flex items-center space-x-2 ">
                             <i class="fas fa-lock text-white"></i>
                             <input class="z-50 outline-none w-full rounded-lg p-2" type="password" name="password" placeholder="Mot de passe...">
                         </div>
+                        @error('password')
+                                <span class="text-red-500 text-sm">{{ $message }}</span>
+                            @enderror
                         <!-- Remember Me -->
                         <label for="remember_me" class="inline-flex items-center justify-end space-x-2">
                             <span class="ms-2 text-sm text-gray-600 dark:text-gray-400">{{ __('Se souvenir de moi ') }}</span>
