@@ -22,7 +22,9 @@
                 </div>
 
                 <div class="flex items-center flex-col px-4">
-                    <a class="w-full text-center text-white text-[1.1rem] bg-[#00B3B3] p-2 rounded-lg font-bold" href="#"><i class="fa-solid fa-newspaper mr-2"></i>Rapports</a>
+                    <a class="w-full text-center text-white text-[1.1rem] bg-[#00B3B3] p-2 rounded-lg font-bold" href="{{ route('dossiers') }}">
+                        <i class="fa-solid fa-newspaper mr-2"></i>Dossiers
+                    </a>
                 </div>
 
                 <div class="flex items-center flex-col px-4">
