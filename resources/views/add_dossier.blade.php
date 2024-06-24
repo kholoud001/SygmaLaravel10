@@ -1,6 +1,7 @@
 
 <x-app-layout>
 
+
 <!-- Modal -->
 <div id="myModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
     <div class="bg-white p-6 rounded-lg shadow-lg text-center">
@@ -10,7 +11,9 @@
 
 <div class="ml-0 md:ml-52 p-8">
     <h1 class="font-bold text-3xl">Créer nouveau rapport</h1>
-    <form action="/machines/add" method="post" id="form_machine" enctype="multipart/form-data">
+    <form id="submit_all"  action="{{ route('dossier.store') }}" method="post" enctype="multipart/form-data">
+    @csrf
+
         <div class="mt-4 bg-white p-4 py-8 rounded-lg">
             <div id="alert-additional-content-5" class="p-4 border border-gray-300 rounded-lg bg-gray-50" role="alert">
                 <div class="flex items-center">
@@ -20,7 +23,7 @@
                     <span class="sr-only">Info</span>
                     <h3 class="text-lg font-medium text-gray-800">Importer carte grise</h3>
                 </div>
-
+            <!--Form part 1 Carte grise -->
                 <div class="flex flex-row md:flex-no-wrap flex-wrap-reverse md:flex-row justify-between">
                     <div class="mt-2 mb-4 text-sm text-gray-800">
                         Veuillez importer une photo de votre carte grise. Veillez à ce que les informations suivantes soient visibles et correctes:
@@ -68,6 +71,8 @@
 
             </div>
         </div>
+
+        <!--form part 2 Dommages -->
 
         <div class="bg-white px-4 pb-4">
             <div id="alert-additional-content-5" class="p-4 border border-gray-300 rounded-lg bg-gray-50" role="alert">
@@ -134,12 +139,15 @@
                     </div>
                 </div>
             </div>
-            <button id="submit_all" type="submit" class="mt-4 p-2 bg-blue-500 text-white rounded w-full">Ajouter Dossier</button>
         </div>
+        <!--
         <div id="added_data">
-
         </div>
+                        -->
     </form>
+
+    <button form="submit_all" type="submit" class="mt-4 p-2 bg-blue-500 text-white rounded w-full">Ajouter Dossier</button>
+
 
 </div>
 
@@ -147,7 +155,7 @@
 
 
 <script>
-    /// 
+    /// damage severity 
 
     document.addEventListener('DOMContentLoaded', () => {
         const existingImageDivs = {};
@@ -308,7 +316,8 @@
 
 
 
-
+</script>
+<script>
     // Image conversion
     function imageToBase64(file) {
         return new Promise((resolve, reject) => {
@@ -438,7 +447,7 @@
                     <!-- [ Layout footer ] End -->
                 </div>
                 <!-- [ Layout content ] Start -->
-            </>
+            </script>
             <!-- [ Layout container ] End -->
         </div>
     </div>

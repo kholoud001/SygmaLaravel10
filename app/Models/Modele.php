@@ -10,7 +10,7 @@ class Modele extends Model
     use HasFactory;
 
 
-    protected $table='models';
+    protected $table='modeles';
 
     protected $fillable = ['name', 'marque_id'];
 

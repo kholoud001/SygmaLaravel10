@@ -27,6 +27,7 @@ return new class extends Migration
             $table->string('chassis_nbr', 255);
             $table->string('cylinder_nbr')->nullable();
             $table->string('fiscal_power')->nullable();
+            $table->foreignId('modele_id')->constrained()->onDelete('cascade');
             $table->string('cartegrise_recto')->nullable();
             $table->string('cartegrise_verso')->nullable();
             $table->string('permis_recto')->nullable();
