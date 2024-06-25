@@ -166,6 +166,29 @@
             const modal = document.createElement('div');
             const dataBg = mapPath.getAttribute('data-bg');
             const dataName = mapPath.getAttribute('data-name');
+            const dataIdName = mapPath.getAttribute('data-id-name');
+
+            //create inputs
+            const input1 = document.createElement('input');
+            const input2 = document.createElement('input');
+            const input3 = document.createElement('input');
+
+            // //fill inputs 
+            input1.setAttribute('name', `${dataIdName}_report`);
+            input2.setAttribute('name', `${dataIdName}_damage`);
+            input3.setAttribute('name', `${dataIdName}_damage-picture`);
+            input3.setAttribute('type', 'file');
+
+            
+            input1.classList.add('hidden');
+            input2.classList.add('hidden');
+            input3.classList.add('hidden');
+
+                    
+            document.getElementById('submit_all').appendChild(input1);
+            document.getElementById('submit_all').appendChild(input2);
+            document.getElementById('submit_all').appendChild(input3);
+
 
             if (dataName != '') {
                 mapPath.classList.add('hover:brightness-75', 'transition-all');
@@ -237,13 +260,19 @@
                     </div>
                     </dialog>`;
 
-            document.body.appendChild(modal);
+            //document.body.appendChild(modal);
+            document.getElementById('submit_all').appendChild(modal);
+
 
             mapPath.setAttribute("onclick", `modal_${dataId}.showModal()`);
 
             document.getElementById(`submit_${dataId}`).addEventListener('click', () => {
                 const severity = document.querySelector(`input[name="severity_${dataId}"]:checked`).value;
+                console.log("severity is : ", severity);
+
                 const severityNum = document.querySelector(`input[name="severity_${dataId}"]:checked`).getAttribute('data-severity');
+                console.log("severity number is : ", severityNum);
+
                 const fileInput = document.getElementById(`frontCard_${dataId}`);
                 const file = fileInput.files[0];
                 const reader = new FileReader();
@@ -288,11 +317,11 @@
 
                     document.getElementById('gridDiv').appendChild(imageDiv);
                     imageDiv.appendChild(imageDivModal);
-                    console.log("severity is : ", severity);
+                   // console.log("severity is : ", severity);
                     mapPath.style.fill = 'rgb(' + severity + ')';
                     tooltip.setContent(dataName + ' - ' + severityNum);
-                    console.log(tooltip);
-                    console.log(mapPath.style.fill);
+                    //console.log(tooltip);
+                    //console.log(mapPath.style.fill);
 
                     const deleteButton = document.querySelector('.buttonDelete' + dataId);
 
@@ -377,7 +406,7 @@
             }
 
             const result = await response.json();
-            console.log('API Response:', result);
+            //console.log('API Response:', result);
 
             // Populate inputs with the received JSON data
             populateInputsFromJSON(result);
@@ -408,11 +437,13 @@
     const id = event.target.dataset.id;
     const name = event.target.dataset.name;
 
-    console.log(id);
-    console.log(name);
+    // console.log(id);
+    // console.log(name);
 
     // Correctly access the value of the checked radio button
     const val_checked = $("input[name='severity_" + id + "']:checked").data('value');
+
+    console.log("value checked: ",val_checked);
 
     // Access the file input
     const input_file = $("#frontCard_" + id).clone();

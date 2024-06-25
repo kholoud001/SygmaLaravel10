@@ -205,6 +205,7 @@ class DashboardController extends Controller
 
             // Handle the creation of related PartieDossier entries
             foreach ($request->all() as $key => $value) {
+               // dd($request->all());
                 if (strpos($key, '_report') !== false) {
                     $id = explode('_', $key)[0];
                     if ($id !== 'null' && !empty($request->input($id . '_damage'))) {
