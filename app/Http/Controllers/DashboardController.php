@@ -188,14 +188,27 @@ class DashboardController extends Controller
             $dossier->save();
 
             // Handle file uploads for the Dossier
-            if ($request->hasFile('data.Machine.cartrecto')) {
-                $cartrectoPath = $request->file('data.Machine.cartrecto')->store('cartegrise');
-                $dossier->cartegrise_recto = $cartrectoPath;
-            }
+            // if ($request->hasFile('data.Machine.cartrecto')) {
+            //     $cartrectoPath = $request->file('data.Machine.cartrecto')->store('cartegrise', 'public');
+            //     $dossier->cartegrise_recto = $cartrectoPath;
+            // }
 
-            if ($request->hasFile('data.Machine.cartverso')) {
-                $cartversoPath = $request->file('data.Machine.cartverso')->store('cartegrise');
-                $dossier->cartegrise_verso = $cartversoPath;
+            if($request->file('data.Machine.cartrecto')){
+                $cartrectoPath = $this->handleImage($request->file('data.Machine.cartrecto'));
+                $dossier->cartegrise_recto = $cartrectoPath;
+
+            }
+            
+            // if ($request->hasFile('data.Machine.cartverso')) {
+            //     $cartversoPath = $request->file('data.Machine.cartverso')->store('cartegrise', 'public');
+            //     $dossier->cartegrise_verso = $cartversoPath;
+            // }
+
+
+            if($request->file('data.Machine.cartverso')){
+                $cartversoPath = $this->handleImage($request->file('data.Machine.cartverso'));
+                $dossier->cartegrise_recto = $cartversoPath;
+
             }
 
             // Save Dossier entry
@@ -206,7 +219,13 @@ class DashboardController extends Controller
                 $id = explode('_', $key)[0];
                 if ($id !== 'null' && strpos($key, '_report') !== false && $request[$id . '_damage'] !== null) {
                     if ($id !== 'null' && !empty($request->input($id . '_damage'))) {
-                        $newFilename = $request->file('frontCard_' . $id)->store('dommages');
+
+
+                        if($request->file('frontCard_' . $id)){
+                            $newFilename = $this->handleImageDamage($request->file('frontCard_' . $id));
+                        }
+
+                        // $newFilename = $request->file('frontCard_' . $id)->store('dommages', 'public');
 
                         $partieDossier = new DossierPartie();
                         $partieDossier->dossier()->associate($dossier);
@@ -222,6 +241,23 @@ class DashboardController extends Controller
 
             return redirect()->route('dossiers')->with('success', 'Dossier ajouté avec succès.');
         }
+
+
+        //Carte Grise photos Storage
+    protected function handleImage($image){
+            $name_gen = hexdec(uniqid()) . '.' . $image->getClientOriginalExtension();
+            $image->move(public_path('assets/images/CarteGrise'), $name_gen); 
+            $imagePath = 'assets/images/CarteGrise/' . $name_gen; 
+            return $imagePath;
+        }
+
+         //Damgae photos Storage
+    protected function handleImageDamage($image){
+        $name_gen = hexdec(uniqid()) . '.' . $image->getClientOriginalExtension();
+        $image->move(public_path('assets/images/Damages'), $name_gen); 
+        $imagePath = 'assets/images/Damages/' . $name_gen; 
+        return $imagePath;
+    }
 
 
     
