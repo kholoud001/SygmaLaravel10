@@ -10,9 +10,11 @@ use Illuminate\Support\Str;
 use App\Models\Modele;
 use App\Models\Marque;
 use App\Models\Partie;
-use Carbon\Carbon;
-use DB;
-
+use DateTime;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Carbon as SupportCarbon;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\DB as FacadesDB;
 
 class DashboardController extends Controller
 {
@@ -31,7 +33,7 @@ class DashboardController extends Controller
 
         dd($request->all());
         // Validate incoming request data
-        $validatedData = $request->validate([
+        $request = $request->validate([
             'data.Machine.num_imma' => 'required|string|max:255',
             'data.Machine.num_imma_ante' => 'nullable|string|max:255',
             'data.Machine.date_mc' => 'nullable|date',
@@ -60,20 +62,20 @@ class DashboardController extends Controller
 
         // Create Dossier entry in dossiers table
         $dossier = Dossier::create([
-            'registration_number' => $validatedData['data']['Machine']['num_imma'],
-            'previous_registration' => $validatedData['data']['Machine']['num_imma_ante'],
-            'first_registration' => $validatedData['data']['Machine']['date_mc'],
-            'MC_maroc' => $validatedData['data']['Machine']['date_mc_maroc'],
-            'usage' => $validatedData['data']['Machine']['v_usage'],
-            'owner' => $validatedData['data']['Machine']['name'],
-            'address' => $validatedData['data']['Machine']['adresse'],
-            'validity_end' => $validatedData['data']['Machine']['fin_valide'],
-            'type' => $validatedData['data']['Machine']['marque'],
-            'genre' => $validatedData['data']['Machine']['type'],
-            'fuel_type' => $validatedData['data']['Machine']['genre'],
-            'chassis_nbr' => $validatedData['data']['Machine']['type_carburant'],
-            'cylinder_nbr' => $validatedData['data']['Machine']['n_chassis'],
-            'fiscal_power' => $validatedData['data']['Machine']['n_cylindres'],
+            'registration_number' => $request['data']['Machine']['num_imma'],
+            'previous_registration' => $request['data']['Machine']['num_imma_ante'],
+            'first_registration' => $request['data']['Machine']['date_mc'],
+            'MC_maroc' => $request['data']['Machine']['date_mc_maroc'],
+            'usage' => $request['data']['Machine']['v_usage'],
+            'owner' => $request['data']['Machine']['name'],
+            'address' => $request['data']['Machine']['adresse'],
+            'validity_end' => $request['data']['Machine']['fin_valide'],
+            'type' => $request['data']['Machine']['marque'],
+            'genre' => $request['data']['Machine']['type'],
+            'fuel_type' => $request['data']['Machine']['genre'],
+            'chassis_nbr' => $request['data']['Machine']['type_carburant'],
+            'cylinder_nbr' => $request['data']['Machine']['n_chassis'],
+            'fiscal_power' => $request['data']['Machine']['n_cylindres'],
             // Add more fields as needed
         ]);
 
@@ -96,7 +98,7 @@ class DashboardController extends Controller
             $dossierPartie = DossierPartie::create([
                 'dossier_id' => $dossier->id,
                 'partie_id' => 1, // Replace with appropriate partie_id if applicable
-                'damage' => $validatedData['data']['Machine']['debut_annee'],
+                'damage' => $request['data']['Machine']['debut_annee'],
                 'damage_image' => null, // Initialize to null initially
             ]);
 
@@ -116,44 +118,40 @@ class DashboardController extends Controller
 
     public function store(Request $request)
     {
-
-        // dd($request->all());
-
         // Validate incoming request data
-        $validatedData = $request->validate([
-            'data.Machine.num_imma' => 'required|string|max:255',
-            'data.Machine.num_imma_ante' => 'nullable|string|max:255',
-            'data.Machine.date_mc' => 'required|date_format:d/m/Y',
-            'data.Machine.date_mc_maroc' => 'required|date_format:d/m/Y',
-            'data.Machine.v_usage' => 'required|string|max:255',
-            'data.Machine.name' => 'required|string|max:255',
-            'data.Machine.adresse' => 'required|string|max:255',
-            'data.Machine.fin_valide' => 'required|date_format:d/m/Y',
-            'data.Machine.marque' => 'required|string|max:255',
-            'data.Machine.modele' => 'required|string|max:255',
-            'data.Machine.type' => 'required|string|max:255',
-            'data.Machine.genre' => 'required|string|max:255',
-            'data.Machine.type_carburant' => 'required|string|max:255',
-            'data.Machine.n_chassis' => 'required|string|max:255',
-            'data.Machine.n_cylindres' => 'nullable|string|max:255',
-            'data.Machine.puissance' => 'nullable|string|max:255',
-            'data.Machine.cartrecto' => 'nullable|image|max:2048',
-            'data.Machine.cartverso' => 'nullable|image|max:2048',
-            'data.Machine.debut_annee' => 'nullable|string|max:255',
-            'data.Machine.n_fiscalite' => 'nullable|string|max:255',
-            'data.Machine.cotisation' => 'nullable|string|max:255',
-            'data.Machine.photo_dommage' => 'nullable|image|max:2048',
-            'data.Machine.gravite_dommage' => 'nullable|string|in:Léger,Modéré,Grave',
-        ]);
+        // $request = $request->validate([
+        //     'data.Machine.num_imma' => 'required|string|max:255',
+        //     'data.Machine.num_imma_ante' => 'nullable|string|max:255',
+        //     'data.Machine.date_mc' => 'required|date_format:d/m/Y',
+        //     'data.Machine.date_mc_maroc' => 'required|date_format:d/m/Y',
+        //     'data.Machine.v_usage' => 'required|string|max:255',
+        //     'data.Machine.name' => 'required|string|max:255',
+        //     'data.Machine.adresse' => 'required|string|max:255',
+        //     'data.Machine.fin_valide' => 'required|date_format:d/m/Y',
+        //     'data.Machine.marque' => 'required|string|max:255',
+        //     'data.Machine.modele' => 'required|string|max:255',
+        //     'data.Machine.type' => 'required|string|max:255',
+        //     'data.Machine.genre' => 'required|string|max:255',
+        //     'data.Machine.type_carburant' => 'required|string|max:255',
+        //     'data.Machine.n_chassis' => 'required|string|max:255',
+        //     'data.Machine.n_cylindres' => 'nullable|string|max:255',
+        //     'data.Machine.puissance' => 'nullable|string|max:255',
+        //     'data.Machine.cartrecto' => 'nullable|image|max:2048',
+        //     'data.Machine.cartverso' => 'nullable|image|max:2048',
+        //     'data.Machine.debut_annee' => 'nullable|string|max:255',
+        //     'data.Machine.n_fiscalite' => 'nullable|string|max:255',
+        //     'data.Machine.cotisation' => 'nullable|string|max:255',
+        //     'data.Machine.photo_dommage' => 'nullable|image|max:2048',
+        //     'data.Machine.gravite_dommage' => 'nullable|string|in:Léger,Modéré,Grave',
+        // ]);
 
 
-       // dd($validatedData);
-
-        DB::transaction(function () use ($validatedData, $request) {
+       // dd($request);
+    //    dd($request->all());
             // Create and save the Model and Mark
             $model = new Modele();
-            $model->name = $validatedData['data']['Machine']['modele'];
-            $marqueName = $validatedData['data']['Machine']['marque'];
+            $model->name = $request['data']['Machine']['modele'];
+            $marqueName = $request['data']['Machine']['marque'];
             $mark = Marque::firstOrCreate(['name' => $marqueName]);
             $model->marque_id = $mark->id; 
             $model->save();
@@ -161,32 +159,32 @@ class DashboardController extends Controller
             // Create and save the Dossier
             $dossier = new Dossier();
             $dossier->modele()->associate($model);
-            $dossier->registration_number = $validatedData['data']['Machine']['num_imma'];
-            $dossier->previous_registration = $validatedData['data']['Machine']['num_imma_ante'];
-            $dossier->usage = $validatedData['data']['Machine']['v_usage'];
-            $dossier->address = $validatedData['data']['Machine']['adresse'];
-            $dossier->type = $validatedData['data']['Machine']['type_carburant'];
-            $dossier->chassis_nbr = $validatedData['data']['Machine']['n_chassis'];
-            $dossier->cylinder_nbr = $validatedData['data']['Machine']['n_cylindres'];
-            $dossier->fiscal_power = $validatedData['data']['Machine']['puissance'];
+            $dossier->registration_number = $request['data']['Machine']['num_imma'];
+            $dossier->previous_registration = $request['data']['Machine']['num_imma_ante'];
+            $dossier->usage = $request['data']['Machine']['v_usage'];
+            $dossier->address = $request['data']['Machine']['adresse'];
+            $dossier->type = $request['data']['Machine']['type_carburant'];
+            $dossier->chassis_nbr = $request['data']['Machine']['n_chassis'];
+            $dossier->cylinder_nbr = $request['data']['Machine']['n_cylindres'];
+            $dossier->fiscal_power = $request['data']['Machine']['puissance'];
 
-            $dateString = $validatedData['data']['Machine']['date_mc'];
-            $date = Carbon::createFromFormat('d/m/Y', $dateString);
+            $dateString = $request['data']['Machine']['date_mc'];
+            $date = DateTime::createFromFormat('d/m/Y', $dateString);
             $dossier->first_registration = $date;
-           // $dossier->first_registration = new Carbon($validatedData['data']['Machine']['date_mc']);
-            $dateString1 = $validatedData['data']['Machine']['date_mc_maroc'];
-            $date1 = Carbon::createFromFormat('d/m/Y', $dateString1);
+           // $dossier->first_registration = new Carbon($request['data']['Machine']['date_mc']);
+            $dateString1 = $request['data']['Machine']['date_mc_maroc'];
+            $date1 = DateTime::createFromFormat('d/m/Y', $dateString1);
             $dossier->MC_maroc = $date1;
 
-           // $dossier->mc_maroc = new Carbon($validatedData['data']['Machine']['date_mc_maroc']);
-            $dateString2 = $validatedData['data']['Machine']['fin_valide'];
-            $date2 = Carbon::createFromFormat('d/m/Y', $dateString2);
+           // $dossier->mc_maroc = new Carbon($request['data']['Machine']['date_mc_maroc']);
+            $dateString2 = $request['data']['Machine']['fin_valide'];
+            $date2 = DateTime::createFromFormat('d/m/Y', $dateString2);
             $dossier->validity_end = $date2;
 
-           // $dossier->validity_end = new Carbon($validatedData['data']['Machine']['fin_valide']);
-            $dossier->genre = $validatedData['data']['Machine']['genre'];
-            $dossier->owner = $validatedData['data']['Machine']['name'];
-            $dossier->fuel_type = $validatedData['data']['Machine']['type_carburant'];
+           // $dossier->validity_end = new Carbon($request['data']['Machine']['fin_valide']);
+            $dossier->genre = $request['data']['Machine']['genre'];
+            $dossier->owner = $request['data']['Machine']['name'];
+            $dossier->fuel_type = $request['data']['Machine']['type_carburant'];
             $dossier->save();
 
             // Handle file uploads for the Dossier
@@ -205,13 +203,10 @@ class DashboardController extends Controller
 
             // Handle the creation of related PartieDossier entries
             foreach ($request->all() as $key => $value) {
-               // dd($request->all());
-                if (strpos($key, '_report') !== false) {
-                    $id = explode('_', $key)[0];
+                $id = explode('_', $key)[0];
+                if ($id !== 'null' && strpos($key, '_report') !== false && $request[$id . '_damage'] !== null) {
                     if ($id !== 'null' && !empty($request->input($id . '_damage'))) {
-                        $originalFilename = pathinfo($request->file('frontCard_' . $id)->getClientOriginalName(), PATHINFO_FILENAME);
-                        $safeFilename = Str::slug($originalFilename);
-                        $newFilename = $safeFilename . '-' . uniqid() . '.' . $request->file('frontCard_' . $id)->getClientOriginalExtension();
+                        $newFilename = $request->file('frontCard_' . $id)->store('dommages');
 
                         $partieDossier = new DossierPartie();
                         $partieDossier->dossier()->associate($dossier);
@@ -220,17 +215,13 @@ class DashboardController extends Controller
                         $partieDossier->damage = $request->input($id . '_damage');
                         $partieDossier->damage_image = $newFilename;
 
-                        // Save the uploaded file
-                        $request->file('frontCard_' . $id)->storeAs('dommages', $newFilename);
-
                         $partieDossier->save();
                     }
                 }
-            }
-        });
+            };
 
-        return redirect()->back()->with('success', 'Dossier ajouté avec succès.');
-    }
+            return redirect()->route('dossiers')->with('success', 'Dossier ajouté avec succès.');
+        }
 
 
     
