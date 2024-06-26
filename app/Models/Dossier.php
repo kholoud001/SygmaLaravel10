@@ -34,4 +34,9 @@ class Dossier extends Model
     {
         return $this->belongsTo(Modele::class);
     }
+
+    public function dossierParties()
+    {
+        return $this->hasMany(DossierPartie::class);
+    }
 }

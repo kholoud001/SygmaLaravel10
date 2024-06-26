@@ -17,14 +17,33 @@
                     </a>
                 </div>
                 <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-                    <!-- card -->
-                    <div class="card card-compact w-full md:w-96 bg-base-100 shadow-xl">
-                        <figure><img class="h-24 w-full object-cover" src="{{ asset('images/car1.jpg') }}" alt="car_images"></figure>
+                    @foreach($dossiers as $dossier)
+                    <div class="card card-compact w-full md:w-96 bg-base-100 shadow-xl mb-4">
+                        <!-- Etape Title -->
+                        <div class="bg-[#009999] p-4 rounded-lg hover:scale-105 transition-all mb-6">
+                            <h3 class="text-lg  text-white font-bold ">Etape</h3>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <figure>
+                                    @foreach($dossier->dossierParties as $dossierPartie)
+                                        <img class="rounded-lg" src="{{ asset( $dossierPartie->damage_image) }}" alt="Damage Image">
+                                    @endforeach
+                                </figure>
+                            </div>
+                            <div>
+                                <figure>
+                                    <p>croquet</p>
+                                </figure>
+                            </div>
+                        </div>
+                        
                         <div class="card-body">
-                            <h2 class="card-title font-bold">Car Model</h2>
-                            <p><b>Date:</b> 01-01-2022 - 01-01-2023</p>
-                            <p><b>VIN:</b> ABC123456789</p>
-                            <p><b>Prix:</b> 1,500 Dh</p>
+                            <h2 class="card-title font-bold">{{ $dossier->modele->name }} - {{ $dossier->modele->marque->name }}</h2>
+                            <p><b>Date:</b> {{ Carbon\Carbon::parse($dossier->first_registration)->format('d-m-Y') }} - {{ Carbon\Carbon::parse($dossier->validity_end)->format('d-m-Y') }}</p>
+                            <p><b>Registration Number:</b> {{ $dossier->registration_number }}</p>
+                            <p><b>Owner:</b> {{ $dossier->owner }}</p>
                             <div class="card-actions justify-end">
                                 <a href="#" class="bg-[#009999] p-4 rounded-lg text-white font-bold hover:scale-105 transition-all">
                                     <i class="fas fa-eye mr-2"></i>Afficher les détails
@@ -32,7 +51,9 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                    @endforeach
+</div>
+
             </div>
     </div>
 </x-app-layout>

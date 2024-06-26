@@ -9,6 +9,8 @@ class DossierPartie extends Model
 {
     use HasFactory;
 
+    protected $table = 'dossier_parties';
+
     protected $fillable = ['damage', 'damage_image'];
 
     public function dossier()

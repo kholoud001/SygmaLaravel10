@@ -33,9 +33,15 @@ Route::get('/dashboard', function () {
 
 Route::middleware('auth')->group(function () {
     Route::get('/dossiers', [DashboardController::class, 'dossiers'])->name('dossiers');
+
+
     Route::get('/add/dossier', [DashboardController::class, 'addDossierIndex'])->name('add.dossier');
     Route::post('/add', [DashboardController::class, 'store'])->name('dossier.store');
 
+
+    Route::get('/etapes', [DashboardController::class, 'etapes'])->name('etapes');
+    Route::post('/etapes/add', [DashboardController::class, 'createEtape'])->name('create.etape');
+    Route::post('/etapes/order', [DashboardController::class, 'orderEtape'])->name('create.order');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
