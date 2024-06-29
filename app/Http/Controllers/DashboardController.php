@@ -21,22 +21,40 @@ use Illuminate\Support\Facades\DB as FacadesDB;
 
 class DashboardController extends Controller
 {
+
     public function dossiers()
-{
-    // Retrieve all dossiers with their related modele, marque, and dossierParties
-    $dossiers = Dossier::with('modele', 'modele.marque', 'dossierParties')->get();
+    {
+        // Retrieve all dossiers with their related modele, marque, and dossierParties
+        $dossiers = Dossier::with('modele', 'modele.marque', 'dossierParties')->get();
+        
+        // Prepare colors
+        $colors = [];
+        $severityMap = [
+            1 => '107 114 128',
+            2 => '179 213 232',
+            3 => '4 153 253',
+            4 => '252 2 4',
+            5 => '0 0 0',
+        ];
+        
+        foreach($dossiers as $dossier) {
+            foreach($dossier->dossierParties as $part) {
+                $partId = $part->partie_id;
+                $damage = $part->damage;
+                $colors[$partId] = $severityMap[$damage] ?? '255 255 255'; 
+            }
+        }
 
-    // Format dates for each dossier
-    $dossiers->each(function ($dossier) {
-        $dossier->first_registration = Carbon::parse($dossier->first_registration)->format('d-m-Y');
-        $dossier->validity_end = Carbon::parse($dossier->validity_end)->format('d-m-Y');
-        $dossier->MC_maroc = Carbon::parse($dossier->MC_maroc)->format('d-m-Y');
-    });
-
-    return view('dossiers', ['dossiers' => $dossiers]);
-}
-
-
+        // Format dates for each dossier
+        $dossiers->each(function ($dossier) {
+            $dossier->first_registration = Carbon::parse($dossier->first_registration)->format('d-m-Y');
+            $dossier->validity_end = Carbon::parse($dossier->validity_end)->format('d-m-Y');
+            $dossier->MC_maroc = Carbon::parse($dossier->MC_maroc)->format('d-m-Y');
+        });
+    
+        return view('dossiers', ['dossiers' => $dossiers, 'colors' => $colors]);
+    }
+    
 
 
     public function addDossierIndex()
@@ -220,5 +238,13 @@ protected function handleImageDamage($image){
         $order->save();
 
         return redirect()->back();
+    }
+
+    public function details($id) {
+
+        $dossier = Dossier::find($id);
+        // dd($dossier->dossierParties);
+
+        return view('details', compact('dossier'));
     }
 }

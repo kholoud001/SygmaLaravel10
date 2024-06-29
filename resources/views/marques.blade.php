@@ -1,43 +1,67 @@
-
-                  
-
 <x-app-layout>
-    <div class="p-4 md:ml-52   flex gap-2 flex-col">
-            <h1 class="font-bold text-3xl">Dossiers</h1>
-            <div class="mt-4 bg-white p-4 py-8 rounded-lg">
-                <div class="flex flex-row gap-4">
-                    <input type="text" placeholder="Search..." class="w-full px-4 py-2 mb-2 border-2 rounded-full border-[#009999]">
-                    <input type="text" placeholder="Date..." class="w-42 px-4 py-2 mb-2 border-2 rounded-full border-[#009999]">
-                    <i class="fas fa-list bg-[#009999] h-fit px-4 py-2 rounded-full text-white text-xl"></i>
+    <div class="p-4 md:ml-52 grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
+        <h1 class="text-2xl font-bold mb-6 col-span-full">Marques</h1>
+        <div class="flex flex-row gap-2 items-center col-span-full mb-4">
+            <input type="text" placeholder="Search..." class="w-3/4 border-2 rounded-full border-[#009999] px-4 py-2">
+            <i class="fa-solid fa-magnifying-glass bg-[#009999] px-4 py-2 rounded-full text-white text-xl"></i>
+
+            <a href="#" class="flex items-center text-white bg-[#009999] hover:bg-[#008080] transition-all rounded-full px-4 py-3">
+                <i class="fas fa-plus mr-2"></i> Ajouter Nouvelle Marque
+            </a>
+        </div>
+
+        @foreach ($marques as $marque)
+            <div class="bg-white rounded-lg shadow-md p-4">
+                <div>
+                    <h2 class="text-xl font-semibold mb-2 cursor-pointer" onclick="toggleModeles({{ $marque->id }})">
+                        {{ $marque->name }}
+                    </h2>
                 </div>
-                <div class="flex flex-row w-full justify-between">
-                    <select name="#" id="#" class="w-48 border-2 rounded-full border-[#009999] outline-none p-2 mb-4">
-                        <option value="Testing" disabled selected>Select car...</option>
-                    </select>
-                    <a href="{{ route('add.dossier') }}" class="text-white bg-[#009999] hover:bg-[#008080] transition-all h-fit rounded-full p-3">
-                        <i class="fas fa-plus mr-2"></i>Créer nouveau rapport
-                    </a>
+                <div id="modeles-{{ $marque->id }}" class="hidden overflow-y-auto" style="max-height: 200px;">
+                    
                 </div>
-                <!-- card start -->
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-             
-                @foreach ($dossiers as $dossier)
-                    <div data-dossier-id="{{ $dossier->id }}" class="card card-compact w-full md:w-80 lg:w-96 bg-base-100 shadow-xl mb-4">
-                        <!-- Etape Title -->
-                        <div class="bg-[#009999] p-4 rounded-lg hover:scale-105 transition-all mb-6">
-                            <h3 class="text-lg text-white font-bold">Etape</h3>
-                        </div>
-                        <!-- image and croquet section start -->
-                        @foreach($dossier->dossierParties as $dossierPartie)
-                            <div class="grid grid-cols-2 gap-4">
-                                <div>
-                                    <figure>
-                                        <img class="rounded-lg" src="{{ asset($dossierPartie->damage_image) }}" alt="Damage Image">
-                                    </figure>
-                                </div>
-                          
-                            <div class="relative h-[300px] mb-24 md:mb-0 md:h-20">
-                                <svg class="m-auto w-11/12 md:w-full relative bottom-12" viewBox="200 -400 1500 1800"
+            </div>
+        @endforeach
+    </div>
+
+    <script>
+       async function toggleModeles(marqueId) {
+    const modelesDiv = document.getElementById(`modeles-${marqueId}`);
+    if (modelesDiv.classList.contains('hidden')) {
+        try {
+            const response = await fetch(`/marques/${marqueId}/modeles`);
+            const data = await response.json();
+            
+            modelesDiv.innerHTML = ''; 
+            data.forEach(modele => {
+                const modeleDiv = document.createElement('div');
+                modeleDiv.classList.add('bg-gray-100', 'p-2', 'rounded', 'mt-2');
+                modeleDiv.innerHTML = `
+                    <div class="flex justify-between items-center cursor-pointer" onclick="showPopup(${modele.id})">
+                        <span style="cursor: pointer;" onclick="showSVG(${modele.id})">${modele.name}</span>
+                    </div>
+                    <div id="svgContainer-${modele.id}" class="hidden">
+                        
+                    </div>
+                `;
+                modelesDiv.appendChild(modeleDiv);
+            });
+
+            modelesDiv.classList.remove('hidden');
+        } catch (error) {
+            console.error('Error fetching and displaying modeles:', error);
+        }
+    } else {
+        modelesDiv.classList.add('hidden');
+    }
+}
+
+function showSVG(modeleId) {
+    const svgContainer = document.getElementById(`svgContainer-${modeleId}`);
+    if (svgContainer.classList.contains('hidden')) {
+        // Example SVG content (replace with your actual SVG generation logic)
+        const svgContent = `
+            <svg class="m-auto w-11/12 md:w-full relative bottom-12" viewBox="180 -600 1500 1800"
                                 xmlns="http://www.w3.org/2000/svg" id="car-map">
                                 <g id="layer2" transform="matrix(0, 1, -1, 0, 254.000085527972, -254.000194186645)" style="transform-origin: 555.665px 834.02px;">
                                     <g id="g4113" transform="translate(-13.78 3.524)">
@@ -96,29 +120,15 @@
                                     <path class="mapPath" data-bg="https://www.feuvert.be/articles/wp-content/uploads/2021/04/Article-Modifications-legislations-Feu-VERT-2021-plaque-immatriculation-2002.png" data-id-name = "20" data-name="Plaque immatriculation arriere" data-id="path37" style="stroke-width: 5px; stroke: rgb(0, 0, 0); paint-order: stroke; fill: {{ isset($colors[20]) ? 'rgb(' . $colors[20] . ')' : 'rgb(255, 255, 255)' }};" d="M 1292.264 833.899 L 1292.264 736.886 L 1304.908 736.886 L 1317.546 736.886 L 1317.546 833.899 L 1317.546 930.909 L 1304.908 930.909 L 1292.264 930.909 L 1292.264 833.899 Z" data-name="Plaque immatriculation arriere" data-severity="0"></path>
                                 </g>
                                </svg>
-                            </div>
-                        </div>
-                        @endforeach 
-                        <!-- image and croquet section End-->
+        `;
+        
+        svgContainer.innerHTML = svgContent;
+        svgContainer.classList.remove('hidden');
+    } else {
+        svgContainer.innerHTML = '';
+        svgContainer.classList.add('hidden');
+    }
+}
 
-                        <div class="card-body">
-                            <h2 class="card-title font-bold">{{ $dossier->modele->name }} - {{ $dossier->modele->marque->name }}</h2>
-                            <p><b>Date:</b> {{ Carbon\Carbon::parse($dossier->created_at)->isoFormat('dddd D MMMM YYYY') }}</p>
-                            <p><b>Registration Number:</b> {{ $dossier->registration_number }}</p>
-                            <p><b>Owner:</b> {{ $dossier->owner }}</p>
-                            <div class="card-actions justify-end">
-                                <a href="{{ route('show.details', [$dossier->id]) }}" class="bg-[#009999] p-4 rounded-lg text-white font-bold hover:scale-105 transition-all">
-                                    <i class="fas fa-eye mr-2"></i>Afficher les détails
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                @endforeach
-              </div>
-              <!--card end -->
-
-            </div>
-    </div>
-
-    
+    </script>
 </x-app-layout>

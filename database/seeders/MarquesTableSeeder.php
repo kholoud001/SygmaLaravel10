@@ -22,22 +22,32 @@ class MarquesTableSeeder extends Seeder
         }
 
         $json = file_get_contents($path);
-        $data = json_decode($json);
+        $data = json_decode($json, true);
 
         if (!$data) {
             echo "Invalid JSON format in marques.json.";
             return;
         }
 
-        foreach ($data as $marque) {
-            DB::table('marques')->insert([
-                'id'=>$marque->id,
-                'name' => $marque->name,
+        foreach ($data as $entry) {
+            // Insérer la marque
+            $marqueId = DB::table('marques')->insertGetId([
+                'name' => $entry['brand'],
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
+
+            // Insérer les modèles associés à cette marque
+            foreach ($entry['models'] as $modelName) {
+                DB::table('modeles')->insert([
+                    'name' => $modelName,
+                    'marque_id' => $marqueId,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            }
         }
 
-        echo "Marques table seeded successfully.";
+        echo "Marques and modeles tables seeded successfully.";
     }
 }

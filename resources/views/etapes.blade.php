@@ -15,14 +15,23 @@
                                 <form action="{{ route('create.etape') }}" method = "POST">
                                     @csrf
                                 <dialog id="createEtape" class="modal">
-                                    <div class="modal-box">
+                                    <div class="modal-box max-w-[88em]">
                                         <h3 class="text-lg font-bold">New Etape</h3>
                                         <p class="py-4">Name of etape</p>
-                                        <input type="text" id="etapeName" name="etape_name" class="w-full p-2 border rounded-lg">
+                                        <div class = "flex flex-col gap-2">
+                                            <input placeholder = "Name of etape..." type="text" id="etapeName" name="etape_name" class="w-full p-2 border rounded-lg">
+                                            <textarea placeholder = "Description..." class = "w-full p-2 border rounded-lg resize-none" name="etape_description" cols="30" rows="10"></textarea>
+                                        </div>
                                         <p class="py-4">Questions</p>
                                         <div id="questionsContainer">
                                             <div class="flex flex-row items-center gap-2">
                                                 <input type="text" name="questions[]" class="w-1/2 p-2 border rounded-lg">
+                                                <select name="types[]" onchange = "handleTypeChange(this)" class = "w-1/2 p-2 border rounded-lg" id="">
+                                                    <option value="Choix unique">Choix unique</option>
+                                                    <option value="Multichoix">Multichoix</option>
+                                                    <option value="Image">Image</option>
+                                                    <option value="Remarque">Remarque</option>
+                                                </select>
                                                 <button type = "button" class="px-2 py bg-green-500 rounded-lg text-white text-2xl" onclick="addQuestion()"><i class="fa-solid fa-plus"></i></button>
                                             </div>
                                         </div>
@@ -85,6 +94,7 @@
 
 <script>
     let questions = [];
+    let types = [];
 
     function showCreateEtapeModal() {
         document.getElementById('createEtape').showModal();
@@ -103,14 +113,84 @@
         input.name = 'questions[]';
         input.className = 'w-1/2 p-2 border rounded-lg';
 
+        const type = document.createElement('select');
+        type.name = 'type[]';
+        type.className = 'w-1/2 p-2 border rounded-lg';
+
+        const option1 = document.createElement('option');
+        option1.value = 'Multichoix';
+        option1.textContent = 'Multichoix';
+
+        const option2 = document.createElement('option');
+        option2.value = 'Choix unique';
+        option2.textContent = 'Choix unique';
+
+        const option3 = document.createElement('option');
+        option3.value = 'Image';
+        option3.textContent = 'Image';
+
+        const option4 = document.createElement('option');
+        option4.value = 'Remarque';
+        option4.textContent = 'Remarque';
+
         const removeButton = document.createElement('button');
         removeButton.className = 'px-2 py bg-red-500 rounded-lg text-white text-2xl';
         removeButton.innerHTML = '<i class="fa-solid fa-minus"></i>';
         removeButton.onclick = () => questionContainer.remove();
 
         questionContainer.appendChild(input);
+        questionContainer.appendChild(type);
+        type.appendChild(option2);
+        type.appendChild(option1);
+        type.appendChild(option3);
+        type.appendChild(option4);
         questionContainer.appendChild(removeButton);
         document.getElementById('questionsContainer').appendChild(questionContainer);
+    }
+
+    function handleTypeChange(selectElement) {
+        const questionContainer = selectElement.parentElement;
+        const existingMultichoixContainer = questionContainer.querySelector('.multichoix-container');
+        const existingAddOptionButton = questionContainer.querySelector('.add-option-button');
+
+        if (selectElement.value === 'Multichoix' && !existingMultichoixContainer) {
+            const multichoixContainer = document.createElement('div');
+            multichoixContainer.className = 'multichoix-container flex flex-col gap-2 mt-2';
+
+            const addOptionButton = document.createElement('button');
+            addOptionButton.type = 'button';
+            addOptionButton.className = 'bg-blue-500 p-2 rounded-lg text-white add-option-button';
+            addOptionButton.textContent = 'Add Option';
+            addOptionButton.onclick = function () {
+                const optionContainer = document.createElement('div');
+                optionContainer.className = 'flex items-center gap-2';
+
+                const optionInput = document.createElement('input');
+                optionInput.type = 'text';
+                optionInput.name = 'multichoix_options[]';
+                optionInput.placeholder = 'Option...';
+                optionInput.className = 'w-full p-2 border rounded-lg';
+
+                const removeOptionButton = document.createElement('button');
+                removeOptionButton.type = 'button';
+                removeOptionButton.className = 'px-2 py bg-red-500 rounded-lg text-white text-2xl';
+                removeOptionButton.innerHTML = '<i class="fa-solid fa-minus"></i>';
+                removeOptionButton.onclick = () => optionContainer.remove();
+
+                optionContainer.appendChild(optionInput);
+                optionContainer.appendChild(removeOptionButton);
+
+                multichoixContainer.appendChild(optionContainer);
+            };
+
+            questionContainer.appendChild(multichoixContainer);
+            questionContainer.appendChild(addOptionButton);
+        } else if (selectElement.value !== 'Multichoix' && existingMultichoixContainer) {
+            existingMultichoixContainer.remove();
+            if (existingAddOptionButton) {
+                existingAddOptionButton.remove();
+            }
+        }
     }
 
     function submitEtape() {

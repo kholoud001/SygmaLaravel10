@@ -9,7 +9,7 @@ class DossierPartie extends Model
 {
     use HasFactory;
 
-    protected $table = 'dossier_parties';
+    protected $table="dossier_parties";
 
     protected $fillable = ['damage', 'damage_image'];
 
@@ -17,7 +17,6 @@ class DossierPartie extends Model
     {
         return $this->belongsTo(Dossier::class);
     }
-
     public function partie()
     {
         return $this->belongsTo(Partie::class);

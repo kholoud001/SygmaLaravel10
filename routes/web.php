@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\MarqueController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
@@ -43,9 +44,19 @@ Route::middleware('auth')->group(function () {
     Route::post('/etapes/add', [DashboardController::class, 'createEtape'])->name('create.etape');
     Route::post('/etapes/order', [DashboardController::class, 'orderEtape'])->name('create.order');
 
+    Route::get('/details/{id}', [DashboardController::class, 'details'])->name('show.details');
+
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+
+    Route::get('/marques', [MarqueController::class, 'index'])->name('marques.index');
+    Route::get('marques/{id}/modeles', [MarqueController::class, 'showModeles'])->name('marques.modeles');
+
+    Route::post('/marques', [MarqueController::class, 'store'])->name('marques.store');
+    Route::put('/marques/{marque}', [MarqueController::class, 'update'])->name('marques.update');
+    Route::delete('/marques/{marque}', [MarqueController::class, 'destroy'])->name('marques.destroy');
 });
 
 require __DIR__.'/auth.php';
