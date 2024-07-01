@@ -61,7 +61,7 @@ function showSVG(modeleId) {
     if (svgContainer.classList.contains('hidden')) {
         // Example SVG content (replace with your actual SVG generation logic)
         const svgContent = `
-            <svg class="m-auto w-11/12 md:w-full relative bottom-12" viewBox="180 -600 1500 1800"
+            <svg class="m-auto w-fit md:w-full relative bottom-8" viewBox="180 -400 1500 1800"
                                 xmlns="http://www.w3.org/2000/svg" id="car-map">
                                 <g id="layer2" transform="matrix(0, 1, -1, 0, 254.000085527972, -254.000194186645)" style="transform-origin: 555.665px 834.02px;">
                                     <g id="g4113" transform="translate(-13.78 3.524)">

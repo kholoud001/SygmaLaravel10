@@ -18,4 +18,16 @@ class Partie extends Model
     {
         return $this->belongsToMany(Dossier::class);
     }
+
+    public function pieces()
+    {
+        return $this->belongsToMany(Piece::class, 'pieces_parties');
+    }
+
+    public function modeles()
+    {
+        return $this->belongsToMany(Modele::class, 'modeles_pieces_parts')
+                    ->withPivot('piece_id', 'min_year', 'max_year')
+                    ->withTimestamps();
+    }
 }
