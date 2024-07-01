@@ -5,9 +5,66 @@
             <input type="text" placeholder="Search..." class="w-3/4 border-2 rounded-full border-[#009999] px-4 py-2">
             <i class="fa-solid fa-magnifying-glass bg-[#009999] px-4 py-2 rounded-full text-white text-xl"></i>
 
-            <a href="#" class="flex items-center text-white bg-[#009999] hover:bg-[#008080] transition-all rounded-full px-4 py-3">
+
+
+            <!-- Modal toggle Ajout Marque -->
+            <button data-modal-target="crud-modal" data-modal-toggle="crud-modal"
+                class="flex items-center text-white bg-[#009999] hover:bg-[#008080] transition-all rounded-full px-4 py-3"
+                type="button">
                 <i class="fas fa-plus mr-2"></i> Ajouter Nouvelle Marque
-            </a>
+            </button>
+
+            <!-- Main modal Ajout Marque -->
+            <div id="crud-modal" tabindex="-1" aria-hidden="true"
+                class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+                <div class="relative p-4 w-full max-w-md max-h-full">
+                    <!-- Modal content -->
+                    <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+                        <!-- Modal header -->
+                        <div
+                            class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                                Créer une nouvelle marque
+                            </h3>
+                            <button type="button"
+                                class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
+                                data-modal-toggle="crud-modal">
+                                <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                    viewBox="0 0 14 14">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                        stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                                </svg>
+                                <span class="sr-only">Close modal</span>
+                            </button>
+                        </div>
+                        <!-- Modal body -->
+                        <form class="p-4 md:p-5" method="POST" action="{{ route('marques.store') }}">
+                            @csrf
+                            <div class="grid gap-4 mb-4 grid-cols-2">
+                                <div class="col-span-2">
+                                    <label for="name"
+                                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Marque</label>
+                                    <input type="text" name="name" id="name"
+                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                                        placeholder="Entrez la marque ..." required>
+                                </div>
+                            </div>
+                            <button type="submit"
+                                class="flex items-center text-white bg-[#009999] hover:bg-[#008080] transition-all rounded-full px-4 py-3">
+                                <svg class="me-1 -ms-1 w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd"
+                                        d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
+                                        clip-rule="evenodd"></path>
+                                </svg>
+                                Ajouter
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+
         </div>
 
         @foreach ($marques as $marque)
@@ -18,54 +75,57 @@
                     </h2>
                 </div>
                 <div id="modeles-{{ $marque->id }}" class="hidden overflow-y-auto" style="max-height: 200px;">
-                    
+
                 </div>
             </div>
         @endforeach
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/flowbite@2.4.1/dist/flowbite.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
 
     <script>
-       async function toggleModeles(marqueId) {
-    const modelesDiv = document.getElementById(`modeles-${marqueId}`);
-    if (modelesDiv.classList.contains('hidden')) {
-        try {
-            const response = await fetch(`/marques/${marqueId}/modeles`);
-            const data = await response.json();
-            
-            modelesDiv.innerHTML = ''; 
-            data.forEach(modele => {
-                const modeleDiv = document.createElement('div');
-                modeleDiv.classList.add('bg-gray-100', 'p-2', 'rounded', 'mt-2');
-                modeleDiv.innerHTML = `
-                    <div class="flex justify-between items-center cursor-pointer" onclick="showPopup(${modele.id})">
-                        <span style="cursor: pointer;" onclick="showSVG(${modele.id})">${modele.name}</span>
-                    </div>
-                    <div id="svgContainer-${modele.id}" class="hidden">
-                        
-                    </div>
-                `;
-                modelesDiv.appendChild(modeleDiv);
-            });
+        async function toggleModeles(marqueId) {
+            const modelesDiv = document.getElementById(`modeles-${marqueId}`);
+            if (modelesDiv.classList.contains('hidden')) {
+                try {
+                    const response = await fetch(`/marques/${marqueId}/modeles`);
+                    const data = await response.json();
 
-            modelesDiv.classList.remove('hidden');
-        } catch (error) {
-            console.error('Error fetching and displaying modeles:', error);
+                    modelesDiv.innerHTML = '';
+                    data.forEach(modele => {
+                        const modeleDiv = document.createElement('div');
+                        modeleDiv.classList.add('bg-gray-100', 'p-2', 'rounded', 'mt-2');
+                        modeleDiv.innerHTML = `
+                        <div class="flex justify-between items-center cursor-pointer">
+                            <span style="cursor: pointer;" onclick="showSVG(${modele.id})">${modele.name}</span>
+                        </div>
+                        <div id="svgContainer-${modele.id}" class="hidden"></div>
+                    `;
+                        modelesDiv.appendChild(modeleDiv);
+                    });
+
+                    modelesDiv.classList.remove('hidden');
+                } catch (error) {
+                    console.error('Error fetching and displaying modeles:', error);
+                }
+            } else {
+                modelesDiv.classList.add('hidden');
+            }
         }
-    } else {
-        modelesDiv.classList.add('hidden');
-    }
-}
 
-function showSVG(modeleId) {
-    const svgContainer = document.getElementById(`svgContainer-${modeleId}`);
-    if (svgContainer.classList.contains('hidden')) {
-        // Example SVG content (replace with your actual SVG generation logic)
-        const svgContent = `
+        function showSVG(modeleId) {
+            const svgContainer = document.getElementById(`svgContainer-${modeleId}`);
+            if (svgContainer.classList.contains('hidden')) {
+                const bgImage = $(`.mapPath[data-id='${modeleId}']`).attr('data-bg');
+
+                const svgContent = `
             <svg class="m-auto w-fit md:w-full relative bottom-8" viewBox="180 -400 1500 1800"
                                 xmlns="http://www.w3.org/2000/svg" id="car-map">
                                 <g id="layer2" transform="matrix(0, 1, -1, 0, 254.000085527972, -254.000194186645)" style="transform-origin: 555.665px 834.02px;">
                                     <g id="g4113" transform="translate(-13.78 3.524)">
-                                        <path class="mapPath" data-bg="https://www.aureliacar.com/Files/29327/Img/09/FT02146-SX-Aile-arriere-gauche-FIAT-500-phase-1--2007-2015--Neuve-a-peindre_1x800.jpg" data-name="Aile arriere gauche" data-id="path3070" style="stroke: rgb(0, 0, 0); stroke-width: 5; fill: rgb(255, 255, 255);" d="M 357.43 1085.43 C 393.14 1062.57 494.57 1006.86 494.57 1006.86 C 536 991.14 634.57 995.43 686 994 C 737.43 992.57 777.248 996.088 818.148 1012.998 C 859.148 1029.928 936.567 1087.874 953.267 1093.074 C 976.067 1100.214 1080.3 1101.14 1118.9 1114 C 1157.4 1126.86 1144.6 1146.86 1144.6 1146.86 L 1114.6 1142.57 L 1108.8 1195.49 C 1108.8 1195.49 1146 1196.86 1150.3 1211.14 C 1154.6 1225.43 1156 1242.57 1147.4 1252.57 C 1138.9 1262.6 1133.1 1251.14 1128.9 1265.4 C 1124.6 1279.7 1126 1294 1101.7 1292.6 C 1077.4 1291.1 1003.1 1292.6 1003.1 1292.6 C 1003.1 1292.6 987.4 1184 904.6 1186.86 C 821.7 1189.71 808.9 1292.6 808.9 1292.6 L 361.599 1292.6" data-name="Aile arriere gauche" data-severity="0"></path>
+                                        <path class="mapPath" data-bg="https://www.aureliacar.com/Files/29327/Img/09/FT02146-SX-Aile-arriere-gauche-FIAT-500-phase-1--2007-2015--Neuve-a-peindre_1x800.jpg" data-id-name="14" data-name="Aile arriere gauche" data-id="path3070" style="stroke: rgb(0, 0, 0); stroke-width: 5; fill: rgb(255, 255, 255);" d="M 357.43 1085.43 C 393.14 1062.57 494.57 1006.86 494.57 1006.86 C 536 991.14 634.57 995.43 686 994 C 737.43 992.57 777.248 996.088 818.148 1012.998 C 859.148 1029.928 936.567 1087.874 953.267 1093.074 C 976.067 1100.214 1080.3 1101.14 1118.9 1114 C 1157.4 1126.86 1144.6 1146.86 1144.6 1146.86 L 1114.6 1142.57 L 1108.8 1195.49 C 1108.8 1195.49 1146 1196.86 1150.3 1211.14 C 1154.6 1225.43 1156 1242.57 1147.4 1252.57 C 1138.9 1262.6 1133.1 1251.14 1128.9 1265.4 C 1124.6 1279.7 1126 1294 1101.7 1292.6 C 1077.4 1291.1 1003.1 1292.6 1003.1 1292.6 C 1003.1 1292.6 987.4 1184 904.6 1186.86 C 821.7 1189.71 808.9 1292.6 808.9 1292.6 L 361.599 1292.6" data-name="Aile arriere gauche" data-severity="0"></path>
                                         <path class="mapPath" data-bg="https://www.pieces-auto-moins-cher.fr/1111465/aile-avant-gauche-clio-0419.jpg" data-id-name="8" data-name="Aile avant gauche" data-id="path30701" style="stroke: rgb(0, 0, 0); stroke-width: 5; fill: {{ isset($colors[8]) ? 'rgb(' . $colors[$index] . ')' : 'rgb(255, 255, 255)' }};" d="M 361.599 1292.6 L 308.86 1292.6 C 308.86 1292.6 303.14 1188.29 211.71 1186.86 C 120.29 1185.43 113.14 1292.6 113.14 1292.6 L 47.43 1292.6 L 28.86 1254 C 28.34 1254 2.61 1254 7.43 1236.86 C 12.08 1220.3 3.14 1195.43 24.57 1195.43 C 46 1195.43 71.71 1196.86 71.71 1196.86 L 87.43 1152.57 L 46 1149.71 C 46 1149.71 80.29 1125.43 164.57 1116.86 C 248.86 1108.29 321.71 1108.29 357.43 1085.43 L 361.599 1292.6 Z" data-name="Aile avant gauche" data-severity="0">
                                             <title>Path</title>
                                         </path>
@@ -121,14 +181,36 @@ function showSVG(modeleId) {
                                 </g>
                                </svg>
         `;
-        
-        svgContainer.innerHTML = svgContent;
-        svgContainer.classList.remove('hidden');
-    } else {
-        svgContainer.innerHTML = '';
-        svgContainer.classList.add('hidden');
-    }
-}
+
+
+                svgContainer.innerHTML = svgContent;
+                svgContainer.classList.remove('hidden');
+
+                // Attach onclick event to all paths with class 'mapPath'
+                const paths = svgContainer.querySelectorAll('.mapPath');
+                paths.forEach(path => {
+                    path.onclick = () => handlePathClick(modeleId, path);
+                });
+            } else {
+                svgContainer.innerHTML = '';
+                svgContainer.classList.add('hidden');
+            }
+        }
+
+
+        // Function to handle path click event
+        function handlePathClick(modeleId, pathElement) {
+            const partId = pathElement.getAttribute('data-id-name');
+
+            console.log(`Path with partId ${partId} clicked for modele ${modeleId}`);
+            const redirectUrl = `/pieces?modele_id=${modeleId}&part_id=${partId}`;
+            window.location.href = redirectUrl;
+        }
 
     </script>
+
+
+
+
+
 </x-app-layout>

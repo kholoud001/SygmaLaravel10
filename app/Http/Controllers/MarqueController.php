@@ -22,35 +22,19 @@ class MarqueController extends Controller
 }
 
 
-    public function store(Request $request)
-    {
-        $request->validate([
-            'name' => 'required',
-        ]);
+public function store(Request $request)
+{
+    $request->validate([
+        'name' => 'required|string|max:255|unique:marques,name',
+    ]);
 
-        Marque::create($request->all());
+    $marque = new Marque();
+    $marque->name = $request->name;
+    $marque->save();
 
-        return redirect()->route('marques.index')
-                         ->with('success', 'Marque created successfully.');
-    }
+    // Flash the session variable with a delay
+    return redirect()->back()->with('marque_created', true)->withDelay(500); 
+}
 
-    public function update(Request $request, Marque $marque)
-    {
-        $request->validate([
-            'name' => 'required',
-        ]);
-
-        $marque->update($request->all());
-
-        return redirect()->route('marques.index')
-                         ->with('success', 'Marque updated successfully.');
-    }
-
-    public function destroy(Marque $marque)
-    {
-        $marque->delete();
-
-        return redirect()->route('marques.index')
-                         ->with('success', 'Marque deleted successfully.');
-    }
+ 
 }

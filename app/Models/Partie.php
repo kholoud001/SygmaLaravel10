@@ -19,10 +19,6 @@ class Partie extends Model
         return $this->belongsToMany(Dossier::class);
     }
 
-    public function pieces()
-    {
-        return $this->belongsToMany(Piece::class, 'pieces_parties');
-    }
 
     public function modeles()
     {

@@ -1,8 +1,10 @@
 <?php
 
 use App\Http\Controllers\MarqueController;
+use App\Http\Controllers\PieceController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ModelesPiecesPartsController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -53,10 +55,15 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/marques', [MarqueController::class, 'index'])->name('marques.index');
     Route::get('marques/{id}/modeles', [MarqueController::class, 'showModeles'])->name('marques.modeles');
-
     Route::post('/marques', [MarqueController::class, 'store'])->name('marques.store');
-    Route::put('/marques/{marque}', [MarqueController::class, 'update'])->name('marques.update');
-    Route::delete('/marques/{marque}', [MarqueController::class, 'destroy'])->name('marques.destroy');
+
+    Route::get('/pieces', [PieceController::class, 'index'])->name('pieces.index');
+    Route::post('/pieces', [PieceController::class, 'store'])->name('pieces.store'); 
+
+    Route::post('/all/store', [ModelesPiecesPartsController::class, 'store'])->name('all.store');
+
+
+  
 });
 
 require __DIR__.'/auth.php';
