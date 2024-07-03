@@ -30,4 +30,12 @@ class Modele extends Model
                     ->withPivot('partie_id', 'min_year', 'max_year')
                     ->withTimestamps();
     }
+
+    public function hasPieceForPart($partId)
+{
+    return $this->pieces()->whereHas('parts', function ($query) use ($partId) {
+        $query->where('partie_id', $partId);
+    })->exists();
+}
+
 }

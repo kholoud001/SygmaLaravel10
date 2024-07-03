@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Modele;
 use App\Models\Piece;
 use App\Models\Partie;
+use Illuminate\Support\Facades\DB;
 
 class ModelesPiecesPartsController extends Controller
 {
@@ -19,18 +20,14 @@ class ModelesPiecesPartsController extends Controller
         'max_year' => 'required|integer',
     ]);
 
-    // Get the referer URL from the request headers
     $refererUrl = $request->server->get('HTTP_REFERER');
 
-    // Parse the URL to extract query parameters
     $queryParams = parse_url($refererUrl, PHP_URL_QUERY);
     parse_str($queryParams, $queryParameters);
 
-    // Retrieve modele_id and part_id from query parameters
     $modele_id = $queryParameters['modele_id'] ?? null;
     $part_id = $queryParameters['part_id'] ?? null;
 
-    // Find the relevant modele based on modele_id
     $modele = Modele::find($modele_id);
 
     if (!$modele) {
@@ -44,18 +41,34 @@ class ModelesPiecesPartsController extends Controller
         return redirect()->back()->with('error', 'Piece not found.');
     }
 
-    // Find the partie based on part_id (if applicable)
     $partie = Partie::find($part_id);
 
-    // Attach the piece to the modele with pivot data
     $modele->piecesParties()->attach($piece, [
         'partie_id' => $partie ? $partie->id : null,
         'min_year' => $validatedData['min_year'],
         'max_year' => $validatedData['max_year'],
     ]);
 
-    return redirect()->back()->with('success', 'Data inserted successfully.');
+    return redirect()->route('marques.index')->with('success', 'Data inserted successfully.');
 }
 
-    
+public function hasPieces($partId, $modeleId)
+{
+    $pieces = DB::table('modeles_pieces_parts')
+                ->join('pieces', 'modeles_pieces_parts.piece_id', '=', 'pieces.id')
+                ->where('modeles_pieces_parts.partie_id', $partId)
+                ->where('modeles_pieces_parts.modele_id', $modeleId)
+                ->select('pieces.*')
+                ->get();
+
+    $hasPieces = !$pieces->isEmpty();
+
+    return response()->json([
+        'hasPieces' => $hasPieces,
+        'pieces' => $pieces
+    ]);
+}
+
+
+
 }

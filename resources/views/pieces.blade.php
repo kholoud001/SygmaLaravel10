@@ -134,13 +134,25 @@
 
 </div>
 <script src="https://cdn.jsdelivr.net/npm/flowbite@2.4.1/dist/flowbite.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <!-- Select2 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
 <script>
-        // Function to submit the modal form
+    $(document).ready(function() {
+        $('#pieces').select2({
+            theme: 'classic', 
+            placeholder: 'Selectionne une pièce',
+            allowClear: true 
+        });
+    }); 
+
+    //form modal
         function submitModalForm() {
 
-            // Submit the form programmatically
             document.getElementById('crud-modal-form').submit();
         }
+
+        
     </script>
 
 </x-app-layout>

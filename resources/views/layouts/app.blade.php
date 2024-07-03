@@ -9,13 +9,24 @@
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
-        <link href="https://cdn.jsdelivr.net/npm/flowbite@2.4.1/dist/flowbite.min.css" rel="stylesheet" />
+
+        <!--Flowbite -->
+        <script src="https://cdn.jsdelivr.net/npm/flowbite@2.4.1/dist/flowbite.min.js"></script>
 
         <!-- SweetAlert2 -->
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+        <!-- Select 2 -->
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
+
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+        <!-- Select2 -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
+
     </head>
     <body class="font-sans antialiased">
         <div class="min-h-screen bg-gray-100 dark:bg-gray-900">

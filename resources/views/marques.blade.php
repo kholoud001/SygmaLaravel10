@@ -5,8 +5,6 @@
             <input type="text" placeholder="Search..." class="w-3/4 border-2 rounded-full border-[#009999] px-4 py-2">
             <i class="fa-solid fa-magnifying-glass bg-[#009999] px-4 py-2 rounded-full text-white text-xl"></i>
 
-
-
             <!-- Modal toggle Ajout Marque -->
             <button data-modal-target="crud-modal" data-modal-toggle="crud-modal"
                 class="flex items-center text-white bg-[#009999] hover:bg-[#008080] transition-all rounded-full px-4 py-3"
@@ -63,8 +61,6 @@
                     </div>
                 </div>
             </div>
-
-
         </div>
 
         @foreach ($marques as $marque)
@@ -74,18 +70,19 @@
                         {{ $marque->name }}
                     </h2>
                 </div>
-                <div id="modeles-{{ $marque->id }}" class="hidden overflow-y-auto" style="max-height: 200px;">
+                <div id="modeles-{{ $marque->id }}" class="hidden overflow-y-auto" style="max-height: 300px;">
 
                 </div>
             </div>
         @endforeach
     </div>
+
+
     <script src="https://cdn.jsdelivr.net/npm/flowbite@2.4.1/dist/flowbite.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-
-
     <script>
+
+
         async function toggleModeles(marqueId) {
             const modelesDiv = document.getElementById(`modeles-${marqueId}`);
             if (modelesDiv.classList.contains('hidden')) {
@@ -100,6 +97,8 @@
                         modeleDiv.innerHTML = `
                         <div class="flex justify-between items-center cursor-pointer">
                             <span style="cursor: pointer;" onclick="showSVG(${modele.id})">${modele.name}</span>
+                                <div id="popover-modele-${modele.id}">            
+                                </div>
                         </div>
                         <div id="svgContainer-${modele.id}" class="hidden"></div>
                     `;
@@ -115,13 +114,16 @@
             }
         }
 
+
+
+        //show svg
         function showSVG(modeleId) {
             const svgContainer = document.getElementById(`svgContainer-${modeleId}`);
             if (svgContainer.classList.contains('hidden')) {
                 const bgImage = $(`.mapPath[data-id='${modeleId}']`).attr('data-bg');
 
                 const svgContent = `
-            <svg class="m-auto w-fit md:w-full relative bottom-8" viewBox="180 -400 1500 1800"
+            <svg id="carSvg" class="m-auto w-fit md:w-full relative bottom-8" viewBox="180 -400 1500 1800"
                                 xmlns="http://www.w3.org/2000/svg" id="car-map">
                                 <g id="layer2" transform="matrix(0, 1, -1, 0, 254.000085527972, -254.000194186645)" style="transform-origin: 555.665px 834.02px;">
                                     <g id="g4113" transform="translate(-13.78 3.524)">
@@ -181,21 +183,61 @@
                                 </g>
                                </svg>
         `;
-
-
                 svgContainer.innerHTML = svgContent;
                 svgContainer.classList.remove('hidden');
 
-                // Attach onclick event to all paths with class 'mapPath'
                 const paths = svgContainer.querySelectorAll('.mapPath');
-                paths.forEach(path => {
-                    path.onclick = () => handlePathClick(modeleId, path);
+                paths.forEach(part => {
+                    const partId = part.getAttribute('data-id-name');
+
+                    fetch(`/parts/${partId}/modele/${modeleId}/hasPieces`)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.hasPieces) {
+                                part.style.fill = 'red';
+                                part.onclick = () => {
+                                    const popoverContent = `
+                                                            <div class="p-4">
+                                                                <div class="font-semibold text-lg mb-2">${data.pieces[0].name}</div>
+                                                                <div class="mb-2">
+                                                                    <img src="${data.pieces[0].image}" alt="Piece Image" class="w-full">
+                                                                </div>
+                                                                <div class="text-sm mb-1">Prix de Réparation: ${data.pieces[0].prix_reparation}</div>
+                                                                <div class="text-sm mb-1">Prix de Remplacement: ${data.pieces[0].prix_remplacement}</div>
+                                                                <a href="#" class="flex items-center font-medium text-blue-600 dark:text-blue-500 dark:hover:text-blue-600 hover:text-blue-700 hover:underline">Read more <svg class="w-2 h-2 ms-1.5 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                                                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/>
+                                                                </svg></a>
+                                                            </div>
+                                                        `;
+                                    const popover = document.getElementById(`popover-modele-${modeleId}`);
+                                    console.log("popover div==> ",popover);
+
+                                    // Update the popover content
+                                    popover.innerHTML = popoverContent;
+
+                                    // Position the popover near the clicked part
+                                    const partRect = part.getBoundingClientRect();
+                                    popover.style.top = `${partRect.bottom + window.scrollY}px`;
+                                    popover.style.left = `${partRect.left + window.scrollX}px`;
+
+                                    // Show the popover
+                                    popover.classList.remove('hidden');
+                                };
+                            }
+
+                            else {
+                                part.style.fill = 'white';
+                                part.onclick = () => handlePathClick(modeleId, part);
+                            }
+                        })
+                        .catch(error => console.error('Error:', error));
                 });
             } else {
                 svgContainer.innerHTML = '';
                 svgContainer.classList.add('hidden');
             }
         }
+
 
 
         // Function to handle path click event
@@ -206,6 +248,8 @@
             const redirectUrl = `/pieces?modele_id=${modeleId}&part_id=${partId}`;
             window.location.href = redirectUrl;
         }
+
+
 
     </script>
 

@@ -62,8 +62,18 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/all/store', [ModelesPiecesPartsController::class, 'store'])->name('all.store');
 
+    Route::get('/parts/{partId}/modele/{modeleId}/hasPieces', [ModelesPiecesPartsController::class, 'hasPieces']);
 
-  
+//     Route::get('/parts/{partId}/modele/{modeleId}/hasPieces', function ($partId, $modeleId) {
+//         $hasPieces = DB::table('modeles_pieces_parts')
+//                         ->where('partie_id', $partId)
+//                         ->where('modele_id', $modeleId)
+//                         ->exists();
+    
+//         return response()->json(['hasPieces' => $hasPieces]);
+//     });
 });
+
+
 
 require __DIR__.'/auth.php';
