@@ -1,5 +1,5 @@
 <x-app-layout>
-    <div class="p-4 md:ml-52 grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
+    <div class="p-4 md:ml-52 grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-4" id="gridContainer">
         <h1 class="text-2xl font-bold mb-6 col-span-full">Marques</h1>
         <div class="flex flex-row gap-2 items-center col-span-full mb-4">
             <input type="text" placeholder="Search..." class="w-3/4 border-2 rounded-full border-[#009999] px-4 py-2">
@@ -64,15 +64,15 @@
         </div>
 
         @foreach ($marques as $marque)
-            <div class="bg-white rounded-lg shadow-md p-4">
+            <div class="bg-white rounded-lg shadow-md p-4 transition-all duration-300 marque-card flex justify-around"
+                id="marque-{{ $marque->id }}">
                 <div>
                     <h2 class="text-xl font-semibold mb-2 cursor-pointer" onclick="toggleModeles({{ $marque->id }})">
                         {{ $marque->name }}
                     </h2>
                 </div>
-                <div id="modeles-{{ $marque->id }}" class="hidden overflow-y-auto" style="max-height: 300px;">
-
-                </div>
+                <div id="modeles-{{ $marque->id }}"
+                    class="hidden overflow-y-auto w-1/2 transition-max-height duration-300 modeles-container"></div>
             </div>
         @endforeach
     </div>
@@ -85,6 +85,9 @@
 
         async function toggleModeles(marqueId) {
             const modelesDiv = document.getElementById(`modeles-${marqueId}`);
+            const marqueCard = document.getElementById(`marque-${marqueId}`);
+            const gridContainer = document.getElementById('gridContainer');
+
             if (modelesDiv.classList.contains('hidden')) {
                 try {
                     const response = await fetch(`/marques/${marqueId}/modeles`);
@@ -95,25 +98,27 @@
                         const modeleDiv = document.createElement('div');
                         modeleDiv.classList.add('bg-gray-100', 'p-2', 'rounded', 'mt-2');
                         modeleDiv.innerHTML = `
-                        <div class="flex justify-between items-center cursor-pointer">
-                            <span style="cursor: pointer;" onclick="showSVG(${modele.id})">${modele.name}</span>
-                                <div id="popover-modele-${modele.id}">            
-                                </div>
-                        </div>
-                        <div id="svgContainer-${modele.id}" class="hidden"></div>
-                    `;
+                    <div class="flex flex-col justify-between items-center cursor-pointer">
+                        <span style="cursor: pointer;" onclick="showSVG(${modele.id})">${modele.name}</span>
+                        <div id="popover-modele-${modele.id}"></div>
+                    </div>
+                    <div id="svgContainer-${modele.id}" class="hidden"></div>
+                `;
                         modelesDiv.appendChild(modeleDiv);
                     });
 
                     modelesDiv.classList.remove('hidden');
+                    gridContainer.classList.replace('lg:grid-cols-4', 'grid-cols-1');
+                    marqueCard.classList.add('grid-cols-2');
                 } catch (error) {
                     console.error('Error fetching and displaying modeles:', error);
                 }
             } else {
                 modelesDiv.classList.add('hidden');
+                gridContainer.classList.replace('grid-cols-1', 'lg:grid-cols-4');
+                marqueCard.classList.remove('grid-cols-2');
             }
         }
-
 
 
         //show svg
@@ -198,6 +203,8 @@
                                 part.onclick = () => {
                                     const popoverContent = `
                                                             <div class="p-4">
+                                                                <button class="close-btn" style="float: right;" onclick="closePopover(${modeleId})">X</button>
+
                                                                 <div class="font-semibold text-lg mb-2">${data.pieces[0].name}</div>
                                                                 <div class="mb-2">
                                                                     <img src="${data.pieces[0].image}" alt="Piece Image" class="w-full">
@@ -210,7 +217,6 @@
                                                             </div>
                                                         `;
                                     const popover = document.getElementById(`popover-modele-${modeleId}`);
-                                    console.log("popover div==> ",popover);
 
                                     // Update the popover content
                                     popover.innerHTML = popoverContent;
@@ -235,6 +241,14 @@
             } else {
                 svgContainer.innerHTML = '';
                 svgContainer.classList.add('hidden');
+            }
+        }
+
+
+        function closePopover(modeleId) {
+            const popover = document.getElementById(`popover-modele-${modeleId}`);
+            if (popover) {
+                popover.classList.add('hidden');
             }
         }
 

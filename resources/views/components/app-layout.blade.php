@@ -118,7 +118,7 @@
                 <div class="flex items-center flex-col px-4">
                     <a class="w-full text-center text-white text-[1.1rem] bg-[#00B3B3] p-2 rounded-lg font-bold"
                         href="{{ route('dossiers') }}">
-                        <i class="fa-solid fa-newspaper mr-2"></i>Dossiers
+                        <i class="fas fa-folder-open mr-2"></i>Dossiers
                     </a>
                 </div>
 
@@ -132,6 +132,12 @@
                     <a class="w-full text-center text-white text-[1.1rem] bg-[#00B3B3] p-2 rounded-lg font-bold"
                         href="{{route('marques.index')}}">
                         <i class="fas fa-file-lines mr-2"></i>Marques
+                    </a>
+                </div>
+                <div class="flex items-center flex-col px-4">
+                    <a class="w-full text-center text-white text-[1.1rem] bg-[#00B3B3] p-2 rounded-lg font-bold"
+                        href="#">
+                        <i class="fas fa-gears mr-2"></i>Pieces
                     </a>
                 </div>
 
@@ -169,6 +175,8 @@
                         class="fa-solid fa-bell mr-2"></i>Etapes</a>
                 <a class="bg-[#009999] px-2 py-1 rounded-full text-white text-2xl font-bold" href="#"><i
                         class="fa-solid fa-bell mr-2"></i>Marques</a>
+                 <a class="bg-[#009999] px-2 py-1 rounded-full text-white text-2xl font-bold" href="#"><i
+                        class="fa-solid fa-bell mr-2"></i>Pieces</a>        
 
             </div>
         </div>
