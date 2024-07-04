@@ -72,8 +72,8 @@
                     </h2>
                 </div>
                 <div id="modeles-{{ $marque->id }}"
-                    class="hidden overflow-y-auto w-1/2 transition-max-height duration-300 modeles-container"></div>
-            </div>
+                class="hidden overflow-y-auto w-3/4 transition-max-height duration-300 modeles-container" style="max-height: 400px;"></div>
+                </div>
         @endforeach
     </div>
 
@@ -98,25 +98,28 @@
                         const modeleDiv = document.createElement('div');
                         modeleDiv.classList.add('bg-gray-100', 'p-2', 'rounded', 'mt-2');
                         modeleDiv.innerHTML = `
-                    <div class="flex flex-col justify-between items-center cursor-pointer">
-                        <span style="cursor: pointer;" onclick="showSVG(${modele.id})">${modele.name}</span>
-                        <div id="popover-modele-${modele.id}"></div>
-                    </div>
-                    <div id="svgContainer-${modele.id}" class="hidden"></div>
+                        <div class="flex flex-row justify-between">
+                            <div class="cursor-pointer">
+                                <span style="cursor: pointer;" onclick="showSVG(${modele.id})">${modele.name}</span>
+                                <div id="content-modele-${modele.id}" class="hidden"></div>
+                            </div>
+                            <div id="svgContainer-${modele.id}" class="hidden"></div>
+                        </div>
+
                 `;
                         modelesDiv.appendChild(modeleDiv);
                     });
 
                     modelesDiv.classList.remove('hidden');
                     gridContainer.classList.replace('lg:grid-cols-4', 'grid-cols-1');
-                    marqueCard.classList.add('grid-cols-2');
+                    marqueCard.classList.add('col-span-full');//col-span-full
                 } catch (error) {
                     console.error('Error fetching and displaying modeles:', error);
                 }
             } else {
                 modelesDiv.classList.add('hidden');
                 gridContainer.classList.replace('grid-cols-1', 'lg:grid-cols-4');
-                marqueCard.classList.remove('grid-cols-2');
+                marqueCard.classList.remove('col-span-full');
             }
         }
 
@@ -201,13 +204,14 @@
                             if (data.hasPieces) {
                                 part.style.fill = 'red';
                                 part.onclick = () => {
-                                    const popoverContent = `
-                                                            <div class="p-4">
-                                                                <button class="close-btn" style="float: right;" onclick="closePopover(${modeleId})">X</button>
-
+                                    const content = `
+                                                            <div class="p-4  relative" style="width: 500px; height: 300px; display: flex; flex-direction: column; align-items: center; justify-content: center;" ">
+                                                                <button class="close-btn" style="align-self: flex-end; color:black;" onclick="closeContent(${modeleId})">
+                                                                    <i class="fa-sharp fa-solid fa-xmark"></i>
+                                                                </button>
                                                                 <div class="font-semibold text-lg mb-2">${data.pieces[0].name}</div>
-                                                                <div class="mb-2">
-                                                                    <img src="${data.pieces[0].image}" alt="Piece Image" class="w-full">
+                                                                <div class="mb-2" style="width: 100%; display: flex; justify-content: center;">
+                                                                    <img src="${data.pieces[0].image}" alt="Piece Image" style="width: 50%; display: block; margin: 0 auto;">
                                                                 </div>
                                                                 <div class="text-sm mb-1">Prix de Réparation: ${data.pieces[0].prix_reparation}</div>
                                                                 <div class="text-sm mb-1">Prix de Remplacement: ${data.pieces[0].prix_remplacement}</div>
@@ -216,19 +220,15 @@
                                                                 </svg></a>
                                                             </div>
                                                         `;
-                                    const popover = document.getElementById(`popover-modele-${modeleId}`);
+                                    const contentDiv = document.getElementById(`content-modele-${modeleId}`);
 
-                                    // Update the popover content
-                                    popover.innerHTML = popoverContent;
+                                    // Update the content div
+                                    contentDiv.innerHTML = content;
 
-                                    // Position the popover near the clicked part
-                                    const partRect = part.getBoundingClientRect();
-                                    popover.style.top = `${partRect.bottom + window.scrollY}px`;
-                                    popover.style.left = `${partRect.left + window.scrollX}px`;
-
-                                    // Show the popover
-                                    popover.classList.remove('hidden');
+                                    // Show the content div
+                                    contentDiv.classList.remove('hidden');
                                 };
+
                             }
 
                             else {
@@ -244,6 +244,10 @@
             }
         }
 
+        function closeContent(modeleId) {
+            const contentDiv = document.getElementById(`content-modele-${modeleId}`);
+            contentDiv.classList.add('hidden');
+        }
 
         function closePopover(modeleId) {
             const popover = document.getElementById(`popover-modele-${modeleId}`);
