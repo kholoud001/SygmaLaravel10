@@ -58,22 +58,18 @@ Route::middleware('auth')->group(function () {
     Route::post('/marques', [MarqueController::class, 'store'])->name('marques.store');
 
     Route::get('/pieces', [PieceController::class, 'index'])->name('pieces.index');
-    Route::post('/pieces', [PieceController::class, 'store'])->name('pieces.store'); 
+    //form piece 
+    Route::get('/piece/add-to-model', [PieceController::class, 'showAddToModelForm'])->name('piece.add-to-model');
+    Route::post('/piece/store-model', [PieceController::class, 'storeModelPiece'])->name('piece.store-model');
 
+    Route::get('/add/pieces', [PieceController::class, 'assignPieceToModelePart'])->name('pieces.assign');
+    Route::post('/pieces', [PieceController::class, 'store'])->name('pieces.store');
     Route::post('/all/store', [ModelesPiecesPartsController::class, 'store'])->name('all.store');
 
     Route::get('/parts/{partId}/modele/{modeleId}/hasPieces', [ModelesPiecesPartsController::class, 'hasPieces']);
 
-//     Route::get('/parts/{partId}/modele/{modeleId}/hasPieces', function ($partId, $modeleId) {
-//         $hasPieces = DB::table('modeles_pieces_parts')
-//                         ->where('partie_id', $partId)
-//                         ->where('modele_id', $modeleId)
-//                         ->exists();
-    
-//         return response()->json(['hasPieces' => $hasPieces]);
-//     });
 });
 
 
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

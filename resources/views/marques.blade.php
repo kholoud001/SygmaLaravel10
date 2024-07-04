@@ -243,27 +243,19 @@
                 svgContainer.classList.add('hidden');
             }
         }
-
+       
+        //close content piece
         function closeContent(modeleId) {
             const contentDiv = document.getElementById(`content-modele-${modeleId}`);
             contentDiv.classList.add('hidden');
         }
-
-        function closePopover(modeleId) {
-            const popover = document.getElementById(`popover-modele-${modeleId}`);
-            if (popover) {
-                popover.classList.add('hidden');
-            }
-        }
-
-
 
         // Function to handle path click event
         function handlePathClick(modeleId, pathElement) {
             const partId = pathElement.getAttribute('data-id-name');
 
             console.log(`Path with partId ${partId} clicked for modele ${modeleId}`);
-            const redirectUrl = `/pieces?modele_id=${modeleId}&part_id=${partId}`;
+            const redirectUrl = `/add/pieces?modele_id=${modeleId}&part_id=${partId}`;
             window.location.href = redirectUrl;
         }
 

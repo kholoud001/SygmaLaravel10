@@ -136,7 +136,7 @@
                 </div>
                 <div class="flex items-center flex-col px-4">
                     <a class="w-full text-center text-white text-[1.1rem] bg-[#00B3B3] p-2 rounded-lg font-bold"
-                        href="#">
+                        href="{{route('pieces.index')}}">
                         <i class="fas fa-gears mr-2"></i>Pieces
                     </a>
                 </div>
